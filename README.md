@@ -6,5 +6,5 @@ This Project is for APK Analysis
 
 # How to Use it
 1. Move your APK that want you to analyze to [./data] directory
-    (in this case, your APK name should not have whitespace (' ') !!)
+   (in this case, your APK name should not have whitespace (' ') !!)
 2. $ docker run -it --rm -v [host APK directory path]:/root/workDir/data android-analyzer
