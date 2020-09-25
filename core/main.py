@@ -24,10 +24,10 @@ def generate_call_references(dataDir, resultsDir) :
 
     for i in range(0, gmlNum) :
         print('[' + str(i+1) + '/' + str(gmlNum) + ']' + ' Generate References...... ' + dataSet[i])
-        parse_call_reference(dataSet[i], resultsDir)
+        parse_call_reference(dataDir + '/' + dataSet[i], resultsDir)
 
     print('Complete Generating References for ' + str(gmlNum) + ' apks :)')
 
 if __name__ == '__main__' :
-    generate_cf_gmls(APK_SET_PATH, GML_RESULTS_PATH)
+#    generate_cf_gmls(APK_SET_PATH, GML_RESULTS_PATH)
     generate_call_references(GML_RESULTS_PATH, REF_RESULTS_PATH)
