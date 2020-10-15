@@ -22,8 +22,7 @@ WORKDIR /root
 RUN \
     mkdir results &&\
     cd results &&\
-    mkdir cg &&\
-    mkdir ref
+    mkdir methodLists &&\
 
 # Set project core
 COPY core /root/workDir/core/
