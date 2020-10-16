@@ -32,6 +32,9 @@ def parse_methods_from_APK(targetAPK) :
 
     return methods
 
+def list_to_string_with_newline(listData) :
+    return '\n'.join(listData)
+
 def generate_methodList(methods) :
     methodInfoList = list()
 
@@ -48,5 +51,5 @@ def generate_methodList(methods) :
 
     print('Parse Method Lists from APK')
 
-    return methodInfoList
+    return list_to_string_with_newline(methodInfoList)
 

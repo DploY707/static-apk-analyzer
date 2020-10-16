@@ -24,7 +24,7 @@ def generate_methodLists_from_dataSet(dataDir, resultDir) :
         resultFilePath = resultDir + '/' + str(i) + '_' + dataSet[i]
 
         #TODO : modify code for readability (easy to read)
-        save_methodList(resultFilePath, '\n'.join(generate_methodList(parse_methods_from_APK(APKFilePath))))
+        save_methodList(resultFilePath, generate_methodList(parse_methods_from_APK(APKFilePath)))
 
     print('Complete analyzing for ' + str(apkNum) + ' apks :)')
 
