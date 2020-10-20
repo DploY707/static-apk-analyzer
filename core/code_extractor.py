@@ -19,11 +19,43 @@ def method_info_to_dict(className, methodName, metaInfo, accessFlags, methodInde
 
     return str(methodDict)
 
+def optimize_instruction_format(inst) :
+    if '-payload' not in inst :
+        instChars = list(inst)
+
+        splited = False
+
+        optimized = ''
+
+        for i in range(len(instChars)) :
+            if not splited and str(instChars[i]).isspace() and str(instChars[i+1]).isspace() :
+                optimized += '||'
+                splited = True
+            else :
+                optimized += instChars[i]
+
+        optimized = (
+                optimized
+                .replace(' ', '')
+                .replace(',', ', ')
+                .split('||')
+                )
+
+        dictInst = OrderedDict()
+
+        dictInst['bytecode'] = optimized[0]
+        dictInst['smali'] = optimized[1]
+
+        return dictInst
+
+    else :
+        return inst
+
 def get_instructions_from_method(method) :
-    instructions = ''
+    instructions = list()
 
     for n, inst in enumerate(method.get_instructions()) :
-        instructions = instructions + inst.disasm().replace('  ','') + '////'
+        instructions.append(optimize_instruction_format(inst.disasm()))
 
     return instructions
 
