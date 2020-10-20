@@ -66,9 +66,6 @@ def parse_methods_from_APK(targetAPK) :
 
     return methods
 
-def list_to_string_with_newline(listData) :
-    return '\n'.join(listData)
-
 def make_method_meta_info_inform(metaInfo) :
     metaInfoDict = OrderedDict()
     registerDict = OrderedDict()
