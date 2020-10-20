@@ -7,8 +7,8 @@ from androguard.core.analysis.analysis import Analysis as an
 def method_info_to_dict(className, methodName, metaInfo, accessFlags, methodIndex, codeSize, instructions) :
     methodDict = OrderedDict()
 
-    methodDict['className'] = className
-    methodDict['methodName'] = methodName
+    methodDict['className'] = str(className)
+    methodDict['methodName'] = str(methodName)
     methodDict['returnType'] = metaInfo['return']
     methodDict['registers'] = metaInfo['registers']
     methodDict['paramList'] = metaInfo['params']
