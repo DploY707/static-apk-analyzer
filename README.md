@@ -9,4 +9,4 @@ This Project is for APK Analysis
    (in this case, your APK name should not have whitespace (' ') !!)
 2. $ docker run -it --rm -v [host APK directory path]:/root/workDir/data android-analyzer
 3. Open another terminal to extract log file from docker container
-   $ docker cp [IMAGE_ID]:/root/results/methodLists/ [host_dir_path_to_save_extracted_data]
+   $ docker cp [CONTAINER_ID]:/root/results/methodLists/ [host_dir_path_to_save_extracted_data]
