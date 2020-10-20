@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, pickle
 from code_extractor import parse_methods_from_APK
 from code_extractor import generate_methodList
 
@@ -8,9 +8,9 @@ RESULT_PATH = '/root/results/methodLists'
 def print_analyzing_status(index, dataSetSize, targetAPK) :
     print('[' + str(index+1) + ' / ' + str(dataSetSize) + ']' +  ' Analyzing......  ' + targetAPK)
 
-def save_methodList(resultPath, contents) :
-    methodList = open(resultPath, 'w')
-    methodList.write(contents)
+def save_methodList(resultPath, methodInfoList) :
+    methodList = open(resultPath, 'wb')
+    pickle.dump(methodInfoList, methodList)
     methodList.close()
 
 def generate_methodLists_from_dataSet(dataDir, resultDir) :

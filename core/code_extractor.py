@@ -17,7 +17,7 @@ def method_info_to_dict(className, methodName, metaInfo, accessFlags, methodInde
     methodDict['codeSize'] = codeSize
     methodDict['instructions'] = instructions
 
-    return str(methodDict)
+    return methodDict
 
 def optimize_instruction_format(inst) :
     if '-payload' not in inst :
@@ -83,13 +83,16 @@ def make_method_meta_info_inform(metaInfo) :
             registerDict['size'] = metaInfo['registers'][1] - metaInfo['registers'][0] + 1
             metaInfoDict['registers'] = registerDict
 
+        metaInfoDict['params'] = list()  # Params is a tuple-list
 
         if len(metaInfo) == 2 :
-            metaInfoDict['params'] = list()  # Params is a tuple-list
+            pass
         elif len(metaInfo) == 3 :
-            metaInfoDict['params'] = metaInfo['params']  # Params is a tuple list
+            for regNum, dataType in metaInfo['params'] :
+                metaInfoDict['params'].append((regNum, str(dataType))) # Params is a tuple list
         else :
             print('meta info error')
+
     else :
         metaInfoDict['return'] = ''
         metaInfoDict['registers'] = ''
@@ -113,4 +116,4 @@ def generate_methodList(methods) :
 
     print('Parse Method Lists from APK')
 
-    return list_to_string_with_newline(methodInfoList)
+    return methodInfoList
