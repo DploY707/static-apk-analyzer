@@ -12,7 +12,7 @@ def method_info_to_dict(className, methodName, metaInfo, accessFlags, methodInde
     methodDict['returnType'] = metaInfo['return']
     methodDict['registers'] = metaInfo['registers']
     methodDict['paramList'] = metaInfo['params']
-    methodDict['accessFlags'] = accessFlags
+    methodDict['accessFlagList'] = accessFlags.split(' ')
     methodDict['methodIndex'] = methodIndex
     methodDict['codeSize'] = codeSize
     methodDict['instructions'] = instructions
