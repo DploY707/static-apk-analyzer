@@ -2,6 +2,8 @@ import os
 from collections import OrderedDict
 from androguard.core.bytecodes.apk import APK as openAPK
 from androguard.core.bytecodes.dvm import DalvikVMFormat as getDEX
+from androguard.core.analysis.analysis import MethodAnalysis as methAnalysis
+from androguard.decompiler.dad.decompile import DvMethod
 
 class CodeExtractor :
 
@@ -12,7 +14,7 @@ class CodeExtractor :
 
         self.methodInfoList = None
 
-    def method_info_to_dict(self, className, methodName, metaInfo, accessFlags, methodIndex, codeSize, instructions) :
+    def method_info_to_dict(self, className, methodName, metaInfo, accessFlags, methodIndex, codeSize, instructions, sourceCode) :
         methodDict = OrderedDict()
 
         methodDict['className'] = str(className)
@@ -24,6 +26,7 @@ class CodeExtractor :
         methodDict['methodIndex'] = methodIndex
         methodDict['codeSize'] = codeSize
         methodDict['instructions'] = instructions
+        methodDict['sourceCode'] = sourceCode
 
         return methodDict
 
@@ -109,7 +112,8 @@ class CodeExtractor :
                 method.get_access_flags_string(),
                 method.get_method_idx(),
                 method.get_length(),
-                self.get_instructions_from_method(method)
+                self.get_instructions_from_method(method),
+                self.decompile_method(method)
                 ))
 
         print('Parse Method Lists from APK')
@@ -119,3 +123,29 @@ class CodeExtractor :
             self.generate_methodList()
 
         return self.methodInfoList
+
+    def decompile_method(self, method) :
+        if 'native' in method.get_access_flags_string() :
+            self.native_to_cpp(method)
+        else :
+            methInfo = methAnalysis(self.dex, method)
+
+            if methInfo.is_external() :
+                # External methods don't have any bytecodes in current dex file
+                # TODO : Link codes in other dex / jar / so / etc . . .
+                print("This method is external method")
+                return 'NO-CODES'
+            elif not methInfo.exceptions.exceptions :
+                return self.bytecode_to_java(methInfo)
+            else :
+                # TODO : Implement decompiling sequence of the methods that include exception & exception-handling sequence
+                return
+
+    def bytecode_to_java(self, methInfo) :
+        dv = DvMethod(methInfo)
+        dv.process()
+        return dv.get_source()
+
+    # TODO : implement or porting new decompiiler for asm to cpp/c code
+    def native_to_cpp(self, methInfo) :
+        return
