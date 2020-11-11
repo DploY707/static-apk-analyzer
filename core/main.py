@@ -1,6 +1,5 @@
 import sys, os, pickle
-from code_extractor import parse_methods_from_APK
-from code_extractor import generate_methodList
+from code_extractor import CodeExtractor
 
 APK_SET_PATH = '/root/workDir/data'
 RESULT_PATH = '/root/results/methodLists'
@@ -23,8 +22,8 @@ def generate_methodLists_from_dataSet(dataDir, resultDir) :
         APKFilePath = dataDir + '/' + dataSet[i]
         resultFilePath = resultDir + '/' + str(i) + '_' + dataSet[i]
 
-        #TODO : modify code for readability (easy to read)
-        save_methodList(resultFilePath, generate_methodList(parse_methods_from_APK(APKFilePath)))
+        ce = CodeExtractor(APKFilePath)
+        save_methodList(resultFilePath, ce.get_methodInfoList())
 
     print('Complete analyzing for ' + str(apkNum) + ' apks :)')
 
