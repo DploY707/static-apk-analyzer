@@ -1,7 +1,6 @@
 import os
 
-def get_files_from_directory(directory) :
-	files = os.listdir(directory)
-	fileNum = len(fileSet)
-	return files, fileNum
-
+def get_fileList_from_directory(dirPath) :
+	fileList = os.listdir(dirPath)
+	fileNum = len(fileList)
+	return fileList, fileNum
