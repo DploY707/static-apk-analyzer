@@ -30,9 +30,6 @@ class DirStruct:
 
 		return resultDirList
 
-	# if useless : delete this method
-#def get_APKs_in_directory(self, dirPath) :
-
 	def parse_directory_hierarchy(self, dirPathList, dirPath) :
 		fileList = self.get_fileList_from_directory(dirPath)
 
@@ -60,4 +57,3 @@ if __name__ == "__main__" :
 	fileDirList = ds.get_directory_include_file(testDirList)
 	print(testDirList)
 	print(fileDirList)
-
