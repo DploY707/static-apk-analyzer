@@ -8,8 +8,8 @@ RESULT_ROOT_PATH = '/root/results/methodLists'
 def print_analyzing_status(index, dataSetSize, dataSetDir, targetAPK) :
 	print('[' + str(index+1) + ' / ' + str(dataSetSize) + '] in "' + dataSetDir + '" Analyzing......  "' + targetAPK + '"')
 
-def print_progress_directorys(index, dirSetList) :
-	print('\n[' + dirSetList[index] + '] in ' + str(dirSetList))
+def print_progress_directories(index, totalDirList) :
+	print('\n[' + totalDirList[index] + '] in ' + str(totalDirList))
 
 def save_methodList(resultPath, methodInfoList) :
 	try :
