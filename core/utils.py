@@ -8,14 +8,14 @@ class DirStruct:
 	def get_fileList_from_directory(self, dirPath) :
 		return os.listdir(dirPath)
 
-	def get_directory_hierarchy(self) :
+	def get_all_subDirectory(self) :
 		subDirPathList = list()
 
 		self.parse_directory_hierarchy(subDirPathList, self.path)
 		return subDirPathList
 
 	# Todo: make directoryList which is including APK(s)
-	def get_directory_include_file(self, dirPathList) :
+	def get_directoryList_include_file(self, dirPathList) :
 		resultDirList = list()
 
 		for dirPath in dirPathList :
@@ -24,7 +24,7 @@ class DirStruct:
 			for fileName in fileList :
 				filePath = dirPath + '/' + fileName
 
-				if self.is_file(filePath) :
+				if not self.is_directory(filePath) :
 					resultDirList.append(dirPath)
 					break
 
@@ -41,9 +41,6 @@ class DirStruct:
 
 	def is_directory(self, dirPath) :
 		return os.path.isdir(dirPath)
-
-	def is_file(self, filePath) :
-		return os.path.isfile(filePath)
 
 	def add_and_find_subDirectory(self, resultPathList, dirPath) :
 		resultPathList.append(dirPath)
