@@ -4,11 +4,33 @@ def get_fileList_in_directory(dirPath) :
 	return os.listdir(dirPath)
 
 def get_leafNodes_in_directory(dirPath) :
+	subDirList = get_subDirectoryList_in_directory(dirPath)
+	leafNodeList = list()
+
+	for subDir in subDirList :
+
+		if is_leaf(subDir) :
+			leafNodeList.append(subDir)
+
+	return leafNodeList
+
+def is_leaf(filePath):
+	subFileList = get_fileList_in_directory(filePath)
+
+	for subFile in subFileList :
+		subFilePath = filePath + '/' + subFile
+
+		if is_directory(subFilePath) :
+			return False
+
+	return True
+
+def get_subDirectoryList_in_directory(dirPath) :
 	findSubDir = subprocess.check_output("find " + dirPath + " -type d 2>/dev/null", shell=True)
 	resultStr = translate_subprocess_output_to_str(findSubDir)
-	resultPathList = trim_newLines(resultStr)[:-1]
+	subDirList = trim_newLines(resultStr)[:-1]
 
-	return resultPathList
+	return subDirList
 
 def translate_subprocess_output_to_str(outputByte) :
 	resultStr = str(outputByte)
@@ -22,3 +44,5 @@ def trim_quotation_marks(inputStr) :
 def trim_newLines(inputStr) :
 	return inputStr.split("\\n")
 
+def is_directory(targetPath) :
+	return os.path.isdir(targetPath)
