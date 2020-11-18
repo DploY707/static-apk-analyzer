@@ -1,6 +1,5 @@
-import sys, os, pickle
+import sys, os, pickle, utils
 from code_extractor import CodeExtractor
-from utils import DirStruct
 
 DATASET_ROOT_PATH = '/root/workDir/data'
 RESULT_ROOT_PATH = '/root/results/methodLists'
@@ -15,6 +14,18 @@ def save_methodList(resultPath, methodInfoList) :
 	methodList = open(resultPath, 'wb')
 	pickle.dump(methodInfoList, methodList)
 	methodList.close()
+
+def filtering_dataset(datasetPath) :
+	targetFileList = utils.get_fileList_in_directory(datasetPath)
+	datasetList = list()
+
+	for targetFile in targetFileList :
+		targetFilePath = datasetPath + '/' + targetFile
+
+		if not utils.is_directory(targetFilePath) :
+			datasetList.append(targetFilePath)
+
+	return datasetList
 
 def generate_methodLists_from_dataSet(dataDir, resultDir) :
 	dataSet = os.listdir(dataDir)
@@ -32,29 +43,13 @@ def generate_methodLists_from_dataSet(dataDir, resultDir) :
 
 	print('Complete analyzing for ' + str(apkNum) + ' apks :)')
 
-def generate_directories_to_endpoint(endpointPath) :
-	if not is_path_exists(endpointPath) :
-		os.makedirs(endpointPath)
-
-def is_path_exists(path) :
-	return os.path.exists(path)
-
-def replace_string_in_list(targetList, srcStr, destStr) :
-	replacedList = list()
-
-	for target in targetList :
-		replacedList.append(target.replace(srcStr, destStr))
-
-	return replacedList
-
 if __name__ == '__main__' :
-	ds = DirStruct(DATASET_ROOT_PATH)
-	dataDirAllList = ds.get_all_subDirectory()
-	dataDirList = ds.get_directoryList_include_file(dataDirAllList)
-	resultDirAllList = replace_string_in_list(dataDirAllList, DATASET_ROOT_PATH, RESULT_ROOT_PATH)
-	resultDirList = replace_string_in_list(dataDirList, DATASET_ROOT_PATH, RESULT_ROOT_PATH)
+	datasetDirList = utils.get_leafNodes_in_directory(DATASET_ROOT_PATH)
+	resultDirList = utils.replace_string_in_list(datasetDirList, DATASET_ROOT_PATH, RESULT_ROOT_PATH)
 
-	for resultDir in resultDirAllList :
-		generate_directories_to_endpoint(resultDir)
+	for resultDir in resultDirList :
+		utils.generate_directories_to_endpoint(resultDir)
 
-
+	for i in range(len(datasetDirList)) :
+		print_progress_directories(i, datasetDirList)
+		generate_methodLists_from_dataSet(datasetDirList[i], resultDirList[i])
