@@ -16,7 +16,7 @@ def get_leafNodes(dirPath) :
 
 def get_subDirectoryList_in_directory(dirPath) :
 	findSubDir = subprocess.check_output("find " + dirPath + " -type d 2>/dev/null", shell=True)
-	resultStr = translate_subprocess_output_to_str(findSubDir)
+	resultStr = convert_subprocess_output_to_str(findSubDir)
 	subDirList = trim_newLines(resultStr)[:-1]
 
 	return subDirList
@@ -33,7 +33,7 @@ def replace_string_in_list(targetList, srcStr, destStr) :
 
 	return replacedList
 
-def translate_subprocess_output_to_str(outputByte) :
+def convert_subprocess_output_to_str(outputByte) :
 	resultStr = str(outputByte)
 	resultStr = trim_quotation_marks(resultStr)[1]
 
