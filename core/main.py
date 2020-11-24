@@ -15,18 +15,6 @@ def save_methodList(resultPath, methodInfoList) :
 	pickle.dump(methodInfoList, methodList)
 	methodList.close()
 
-def filtering_dataset(datasetPath) :
-	targetFileList = utils.get_fileList_in_directory(datasetPath)
-	datasetList = list()
-
-	for targetFile in targetFileList :
-		targetFilePath = datasetPath + '/' + targetFile
-
-		if not utils.is_directory(targetFilePath) :
-			datasetList.append(targetFilePath)
-
-	return datasetList
-
 def generate_methodLists_from_dataSet(dataDir, resultDir) :
 	dataSet = os.listdir(dataDir)
 	apkNum = len(dataSet)
