@@ -10,6 +10,9 @@ def print_analyzing_status(index, dataSetSize, dataSetDir, targetAPK) :
 def print_progress_directories(index, totalDirList) :
 	print('\n\033[92m[' + totalDirList[index] + ']\033[0m' +' in ' + str(totalDirList))
 
+def print_count_completed_apk(apkNum) :
+	print('Complete analyzing for ' + str(apkNum) + ' apks :)')
+
 def save_methodList(resultPath, methodInfoList) :
 	methodList = open(resultPath, 'wb')
 	pickle.dump(methodInfoList, methodList)
@@ -29,7 +32,7 @@ def generate_methodLists_from_dataSet(dataDir, resultDir) :
 
 		save_methodList(resultFilePath, ce.get_methodInfoList())
 
-	print('Complete analyzing for ' + str(apkNum) + ' apks :)')
+	print_count_completed_apk(apkNum)
 
 if __name__ == '__main__' :
 	datasetDirList = utils.get_endpointDirList(DATASET_ROOT_PATH)
