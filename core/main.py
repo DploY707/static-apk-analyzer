@@ -32,7 +32,7 @@ def generate_methodLists_from_dataSet(dataDir, resultDir) :
 	print('Complete analyzing for ' + str(apkNum) + ' apks :)')
 
 if __name__ == '__main__' :
-	datasetDirList = utils.get_leafNodes_in_directory(DATASET_ROOT_PATH)
+	datasetDirList = utils.get_leafNodes(DATASET_ROOT_PATH)
 	resultDirList = utils.replace_string_in_list(datasetDirList, DATASET_ROOT_PATH, RESULT_ROOT_PATH)
 
 	for resultDir in resultDirList :

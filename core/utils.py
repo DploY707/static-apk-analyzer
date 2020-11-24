@@ -3,7 +3,7 @@ import os, subprocess
 def get_fileList_in_directory(dirPath) :
 	return os.listdir(dirPath)
 
-def get_leafNodes_in_directory(dirPath) :
+def get_leafNodes(dirPath) :
 	subDirList = get_subDirectoryList_in_directory(dirPath)
 	leafNodeList = list()
 
