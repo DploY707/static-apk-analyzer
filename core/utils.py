@@ -39,7 +39,7 @@ def convert_subprocess_output_to_str(outputByte) :
 
 	return resultStr
 
-def trim_quotation_marks(inputStr) :
+def trim_quotationMarks(inputStr) :
 	return inputStr.split("'")
 
 def trim_newLines(inputStr) :
