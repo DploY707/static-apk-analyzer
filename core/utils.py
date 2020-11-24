@@ -3,16 +3,16 @@ import os, subprocess
 def get_fileList_in_directory(dirPath) :
 	return os.listdir(dirPath)
 
-def get_leafNodes(dirPath) :
+def get_endpointDirList(dirPath) :
 	subDirList = get_subDirectoryList_in_directory(dirPath)
-	leafNodeList = list()
+	endpointDirList = list()
 
 	for subDir in subDirList :
 
-		if is_leaf(subDir) :
-			leafNodeList.append(subDir)
+		if is_endpoint_directory(subDir) :
+			endpointDirList.append(subDir)
 
-	return leafNodeList
+	return endpointDirList
 
 def get_subDirectoryList_in_directory(dirPath) :
 	findSubDir = subprocess.check_output("find " + dirPath + " -type d 2>/dev/null", shell=True)
@@ -35,7 +35,7 @@ def replace_string_in_list(targetList, srcStr, destStr) :
 
 def convert_subprocess_output_to_str(outputByte) :
 	resultStr = str(outputByte)
-	resultStr = trim_quotation_marks(resultStr)[1]
+	resultStr = trim_quotationMarks(resultStr)[1]
 
 	return resultStr
 
@@ -45,7 +45,7 @@ def trim_quotationMarks(inputStr) :
 def trim_newLines(inputStr) :
 	return inputStr.split("\\n")
 
-def is_leaf(filePath):
+def is_endpoint_directory(filePath):
 	subFileList = get_fileList_in_directory(filePath)
 
 	for subFile in subFileList :
