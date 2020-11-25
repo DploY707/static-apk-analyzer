@@ -5,10 +5,10 @@ DATASET_ROOT_PATH = '/root/workDir/data'
 RESULT_ROOT_PATH = '/root/results/methodLists'
 
 def print_analyzing_status(index, dataSetSize, dataSetDir, targetAPK) :
-	print('\033[92m[' + str(index+1) + ' / ' + str(dataSetSize) + ']\033[0m' + ' in "' + dataSetDir + '" Analyzing......  "' + targetAPK + '"')
+	print(utils.set_string_colored('[' + str(index+1) + ' / ' + str(dataSetSize) + ']', utils.Color.GREEN.value) + ' in "' + dataSetDir + '" Analyzing......  "' + targetAPK + '"')
 
 def print_progress_directories(index, totalDirList) :
-	print('\n\033[92m[' + totalDirList[index] + ']\033[0m' +' in ' + str(totalDirList))
+	print('\n' + utils.set_string_colored('[' + totalDirList[index] + ']', utils.Color.GREEN.value) + ' in ' + str(totalDirList))
 
 def print_count_completed_apk(apkNum) :
 	print('Complete analyzing for ' + str(apkNum) + ' apks :)')

@@ -1,4 +1,26 @@
-import os, subprocess
+import os, subprocess, enum
+
+class Color(enum.Enum) :
+	BLACK = 90
+	RED = 91
+	GREEN = 92
+	YELLOW = 93
+	BLUE = 94
+	MAGENTA = 95
+	CYAN = 96
+	WHITE = 97
+
+def set_string_colored(printStr, colorVal) :
+	if type(colorVal) is str :
+		print("Warning: set_string_colored(printStr, colorVal) - colorVal is int value. ex) Color.RED or 91")
+		return printStr
+
+	colorStr = '\033[' + str(colorVal) + 'm'
+	endColorStr = '\033[0m'
+	coloredStr = colorStr + printStr + endColorStr
+
+	return coloredStr
+
 
 def get_fileList_in_directory(dirPath) :
 	return os.listdir(dirPath)
