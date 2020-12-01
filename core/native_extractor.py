@@ -309,13 +309,3 @@ class NativeExtractor :
 			print("Error: parse_function_define - Wrong format is in LLVM IR function definition ")
 			print(causeStr)
 			exit(-1)
-
-if __name__=="__main__" :
-	IRFILEPATH = "/home/liberty/Code_Extractor/Code-Extractor/data/hello.ll"
-	IRFILEPATH = "/home/liberty/Code_Extractor/Code-Extractor/data/classtest.ll"
-	ne = NativeExtractor(IRFILEPATH)
-	functionList = ne.get_functionList()
-	for function in functionList :
-		print("\n")
-		print(function)
-
