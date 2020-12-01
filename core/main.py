@@ -1,31 +1,46 @@
 import sys, os, pickle
-from code_extractor import CodeExtractor
+import utils, CodeExtractor
 
-APK_SET_PATH = '/root/workDir/data'
-RESULT_PATH = '/root/results/methodLists'
+DATASET_ROOT_PATH = '/root/workDir/data'
+RESULT_ROOT_PATH = '/root/results/methodLists'
 
-def print_analyzing_status(index, dataSetSize, targetAPK) :
-    print('[' + str(index+1) + ' / ' + str(dataSetSize) + ']' +  ' Analyzing......  ' + targetAPK)
+def print_analyzing_status(index, dataSetSize, dataSetDir, targetAPK) :
+	print(utils.set_string_colored('[' + str(index+1) + ' / ' + str(dataSetSize) + ']', utils.Color.GREEN.value) + ' in "' + dataSetDir + '" Analyzing......  "' + targetAPK + '"')
+
+def print_progress_directories(index, totalDirList) :
+	print('\n' + utils.set_string_colored('[' + totalDirList[index] + ']', utils.Color.GREEN.value) + ' in ' + str(totalDirList))
+
+def print_count_completed_apk(apkNum) :
+	print('Complete analyzing for ' + str(apkNum) + ' apks :)')
 
 def save_methodList(resultPath, methodInfoList) :
-    methodList = open(resultPath, 'wb')
-    pickle.dump(methodInfoList, methodList)
-    methodList.close()
+	methodList = open(resultPath, 'wb')
+	pickle.dump(methodInfoList, methodList)
+	methodList.close()
 
 def generate_methodLists_from_dataSet(dataDir, resultDir) :
-    dataSet = os.listdir(dataDir)
-    apkNum = len(dataSet)
+	dataSet = os.listdir(dataDir)
+	apkNum = len(dataSet)
 
-    for i in range(0, apkNum) :
-        print_analyzing_status(i, apkNum, dataSet[i])
+	for i in range(0, apkNum) :
+		print_analyzing_status(i, apkNum, dataDir, dataSet[i])
 
-        APKFilePath = dataDir + '/' + dataSet[i]
-        resultFilePath = resultDir + '/' + str(i) + '_' + dataSet[i]
+		APKFilePath = dataDir + '/' + dataSet[i]
+		resultFilePath = resultDir + '/' + str(i) + '_' + dataSet[i]
 
-        ce = CodeExtractor(APKFilePath)
-        save_methodList(resultFilePath, ce.get_methodInfoList())
+		ce = CodeExtractor(APKFilePath)
 
-    print('Complete analyzing for ' + str(apkNum) + ' apks :)')
+		save_methodList(resultFilePath, ce.get_methodInfoList())
+
+	print_count_completed_apk(apkNum)
 
 if __name__ == '__main__' :
-    generate_methodLists_from_dataSet(APK_SET_PATH, RESULT_PATH)
+	datasetDirList = utils.get_endpointDirList(DATASET_ROOT_PATH)
+	resultDirList = utils.replace_string_in_list(datasetDirList, DATASET_ROOT_PATH, RESULT_ROOT_PATH)
+
+	for resultDir in resultDirList :
+		utils.generate_directories_to_endpoint(resultDir)
+
+	for i in range(len(datasetDirList)) :
+		print_progress_directories(i, datasetDirList)
+		generate_methodLists_from_dataSet(datasetDirList[i], resultDirList[i])
