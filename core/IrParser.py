@@ -1,23 +1,12 @@
-# native_extractor.py
-# llvm ir parse (in now, cover only function)
+# IrParser.py
+# llvm ir parse (in now, cover only function define)
 # RetDec supports configure file in json type
+#
 # contributed by kordood
 
 from collections import OrderedDict
-from enum import Enum
 from sys import exit
-
-class Delimiter(Enum) :
-	PARENL = '('
-	PARENR = ')'
-	BRACEL = '{'
-	BRACER = '}'
-	DEFINE = 'define'
-	DECLARE = 'declare'
-	COMMA = ','
-	AT = '@'
-	PERCENT = '%'
-
+from delimiter import Delimiter
 
 class Function :
 
@@ -47,8 +36,7 @@ class Function :
 	def get_IRCodes(self) :
 		return self.IRCodes
 
-
-class NativeExtractor :
+class IRParser :
 
 	def __init__(self, targetPath, lexFlag=0) :
 		self.IRFile = self.open_IRFile(targetPath)
@@ -309,3 +297,4 @@ class NativeExtractor :
 			print("Error: parse_function_define - Wrong format is in LLVM IR function definition ")
 			print(causeStr)
 			exit(-1)
+ 
