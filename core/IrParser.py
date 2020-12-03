@@ -4,9 +4,9 @@
 #
 # contributed by kordood
 
+from Delimiter import Delimiter
 from collections import OrderedDict
 from sys import exit
-from delimiter import Delimiter
 
 class Function :
 
@@ -91,11 +91,16 @@ class IRParser :
 		return self.functionList
 
 	def open_IRFile(self, IRFilePath) :
-		IRFile = open(IRFilePath, 'r')
+		IRFile = open(IRFilePath, 'r', encoding='us-ascii')
 		return IRFile
 
 	def readline_IRFile(self) :
-		IRStr = self.IRFile.readline()
+		try :
+			IRStr = self.IRFile.readline()
+
+		except UnicodeDecodeError :
+			return ""
+
 		return IRStr
 
 	def readlines_IRFile(self) :
@@ -297,4 +302,3 @@ class IRParser :
 			print("Error: parse_function_define - Wrong format is in LLVM IR function definition ")
 			print(causeStr)
 			exit(-1)
- 
