@@ -55,6 +55,12 @@ def replace_string_in_list(targetList, srcStr, destStr) :
 
 	return replacedList
 
+def run_shell_command(command) :
+	outputByte = subprocess.check_output(command, shell=True)
+	outputStr = convert_subprocess_output_to_str(outputByte)
+
+	return outputStr
+
 def convert_subprocess_output_to_str(outputByte) :
 	resultStr = str(outputByte)
 	resultStr = trim_quotationMarks(resultStr)[1]
