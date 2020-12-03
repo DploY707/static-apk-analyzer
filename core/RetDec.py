@@ -4,11 +4,11 @@
 
 import utils
 from argparse import ArgumentParser
-from subprocess import check_output, check_call
+from subprocess import check_output, call
 
 class RetDec :
 
-	def __init__(self, inputPath, outputPath) :
+	def __init__(self, inputPath=None, outputPath=None) :
 		self.decompiler = self.get_decompiler_path()
 		self.inputPath = inputPath
 		self.outputPath = None
@@ -59,7 +59,7 @@ class RetDec :
 		if self.outputPath :
 			cmd += " -o " + self.outputPath
 
-		outputByte = check_call(cmd, shell=True)
+		outputByte = call(cmd, shell=True)
 
 
 def set_arguments(parser) :
