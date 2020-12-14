@@ -44,7 +44,7 @@ class CodeExtractor :
             dictInst = OrderedDict()
 
             dictInst['bytecode'] = optimized[0]
-            dictInst['smali'] = ''.join(optimized[1:])
+            dictInst['smali'] = ' '.join(optimized[1:])
 
             return dictInst
 
