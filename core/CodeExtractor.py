@@ -1,4 +1,4 @@
-import os
+import os, re
 from collections import OrderedDict
 from androguard.core.bytecodes.apk import APK as openAPK
 from androguard.core.bytecodes.dvm import DalvikVMFormat as getDEX
