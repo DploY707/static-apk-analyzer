@@ -4,8 +4,8 @@
 
 import utils, shutil, os, pickle
 from subprocess import check_output, call, DEVNULL
-from RetDec import RetDec
-from IrParser import IRParser
+from retdec import RetDec
+from irparser import IRParser
 
 class NativeExtractor:
 

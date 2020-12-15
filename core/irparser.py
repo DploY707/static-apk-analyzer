@@ -4,7 +4,7 @@
 #
 # contributed by kordood
 
-from Delimiter import Delimiter
+from delimiter import Delimiter
 from collections import OrderedDict
 from sys import exit
 
