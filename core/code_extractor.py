@@ -1,4 +1,4 @@
-import os
+import os, re
 from collections import OrderedDict
 from androguard.core.bytecodes.apk import APK as openAPK
 from androguard.core.bytecodes.dvm import DalvikVMFormat as getDEX
@@ -32,21 +32,10 @@ class CodeExtractor :
 
     def optimize_instruction_format(self, inst) :
         if '-payload' not in inst :
-            instChars = list(inst)
-
-            splited = False
-
-            optimized = ''
-
-            for i in range(len(instChars)) :
-                if not splited and str(instChars[i]).isspace() and str(instChars[i+1]).isspace() :
-                    optimized += '||'
-                    splited = True
-                else :
-                    optimized += instChars[i]
+            instSep = re.sub("  +", "||", inst)
 
             optimized = (
-                    optimized
+                    instSep
                     .replace(' ', '')
                     .replace(',', ', ')
                     .split('||')
@@ -55,7 +44,7 @@ class CodeExtractor :
             dictInst = OrderedDict()
 
             dictInst['bytecode'] = optimized[0]
-            dictInst['smali'] = optimized[1]
+            dictInst['smali'] = ' '.join(optimized[1:])
 
             return dictInst
 
