@@ -1,6 +1,6 @@
 import sys, os, pickle
 import utils
-from CodeExtractor import CodeExtractor
+from code_extractor import CodeExtractor
 
 DATASET_ROOT_PATH = '/root/workDir/data'
 RESULT_ROOT_PATH = '/root/results/methodLists'
