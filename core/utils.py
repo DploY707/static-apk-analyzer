@@ -1,4 +1,4 @@
-import os, subprocess, enum
+import os, subprocess, enum, re
 
 class Color(enum.Enum) :
 	BLACK = 90
@@ -89,3 +89,8 @@ def is_directory(targetPath) :
 
 def is_path_exists(path) :
 	return os.path.exists(path)
+
+def get_regex_index(targetList, regexStr) :
+	regex = re.compile(regexStr)
+	idxs = [i for i, item in enumerate(targetList) if re.search(regex, item)]
+	return idxs
