@@ -7,6 +7,7 @@
 from delimiter import Delimiter
 from collections import OrderedDict
 from sys import exit
+from utils import get_regex_index
 
 class Function :
 
@@ -35,6 +36,82 @@ class Function :
 
 	def get_IRCodes(self) :
 		return self.IRCodes
+
+
+class InstructionParser :
+
+	def __init__(self, codeList, caller) :
+		self.codeList = codeList
+		self.caller = caller
+		self.callee = list()
+
+	def append_callee(self, callee) :
+		self.callee.append(callee)
+
+# %0 = call i32 @_Zisis(i64* some, i32 num), !insn.addr !4
+# %0 = call i32 (i8*, ...) @_Zisis(i64* some, i32 num), !insn.addr !4 
+
+	def get_caller(self) :
+		return self.caller
+		
+	def get_callee(self) :
+		return self.callee
+
+	def start_parsing(self) :
+		for codeStr in self.codeList :
+			parse_code(codeStr)
+
+		print("parsing Done!")
+
+	def parse_code(self, codeStr) :
+		if is_call(codeStr) :
+			callee = list()
+
+			lexemeList = codeStr.split(' ')
+			retType = find_calleeRetType(lexemeList)
+			funcName = find_calleeName(lexemeList)
+
+			rtIdx = codeStr.index(retType)
+			fnIdx = codeStr.index(funcName)
+
+			check_valid_arrange(rtIdx, fnIdx)
+
+			callee = [retType, funcName]
+			append_callee(callee)
+
+		else :
+			print_error_parse()
+
+	def check_valid_arrange(self, small, big, importance=0) :
+		if small >= big :
+
+			if importance :
+				print_error_arrange()
+
+			else:
+				print_warning_arrange()
+
+		return
+
+	def is_call_instruction(self, codeStr) :
+		index = codeStr.find(Delimiter.CALL.value)
+
+		if index > -1 :
+			return True
+
+		return False
+
+	def find_calleeRetType(self, lexemeList) :
+		callIndex = lexemeList.index(Delimiter.CALL.value)
+
+		return lexemeList[callIndex + 1]
+
+	def find_calleeName(self, lexemeList) :
+		indexs = get_regex_index(lexemeList, '@*(')
+		funcName = lexemeList[indexs[0]].split(Delimiter.PARENL.value)[0]
+		
+		return funcName
+
 
 class IRParser :
 
