@@ -71,22 +71,23 @@ class InstructionParser :
 			rtIdx = codeStr.index(retType)
 			fnIdx = codeStr.index(funcName)
 
-			self.check_valid_arrange(rtIdx, fnIdx)
+			self.check_valid_arrange(codeStr, retType, funcName)
 
 			callee = [retType, funcName]
 			self.append_callee(callee)
 
-#		else :
-#print_error_parse()
+	def check_valid_arrange(self, targetStr, lStr, rStr, importance=0) :
+		small = targetStr.index(lStr)
+		big = targetStr.index(rStr)
 
-	def check_valid_arrange(self, small, big, importance=0) :
-#		if small >= big :
+		if small >= big :
 
-#			if importance :
-#				print_error_arrange()
+			if importance :
+				self.print_error_arrange(targetStr)
+				exit(-1)
 
-#			else:
-#				print_warning_arrange()
+			else:
+				self.print_warning_arrange(targetStr)
 
 		return
 
@@ -108,6 +109,13 @@ class InstructionParser :
 		funcName = lexemeList[indexs[0]].split(Delimiter.PARENL.value)[0]
 		
 		return funcName
+
+	def print_error_arrange(self, targetStr) :
+		print("Error: Invalid arrange of string - \"" + targetStr + "\"")
+
+	def print_warning_arrange(self, targetStr) :
+		print("Warning: Invalid arrange of string - \"" + targetStr + "\"")
+
 
 class IRParser :
 
@@ -375,11 +383,3 @@ class IRParser :
 			print("Error: parse_function_define - Wrong format is in LLVM IR function definition ")
 			print(causeStr)
 			exit(-1)
-
-
-if __name__ == "__main__" :
-	fp = open("test.ll")
-	instLines = fp.readlines()
-	IP = InstructionParser(instLines, "test caller")
-	IP.start_parsing()
-	print(IP.get_callee())
