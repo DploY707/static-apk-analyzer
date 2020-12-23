@@ -14,3 +14,4 @@ class Delimiter(Enum) :
 	COMMA = ','
 	AT = '@'
 	PERCENT = '%'
+	CALL = 'call'

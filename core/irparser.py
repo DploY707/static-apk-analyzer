@@ -48,48 +48,45 @@ class InstructionParser :
 	def append_callee(self, callee) :
 		self.callee.append(callee)
 
-# %0 = call i32 @_Zisis(i64* some, i32 num), !insn.addr !4
-# %0 = call i32 (i8*, ...) @_Zisis(i64* some, i32 num), !insn.addr !4 
-
 	def get_caller(self) :
 		return self.caller
-		
+
 	def get_callee(self) :
 		return self.callee
 
 	def start_parsing(self) :
 		for codeStr in self.codeList :
-			parse_code(codeStr)
+			self.parse_code(codeStr)
 
 		print("parsing Done!")
 
 	def parse_code(self, codeStr) :
-		if is_call(codeStr) :
+		if self.is_call_instruction(codeStr) :
 			callee = list()
 
 			lexemeList = codeStr.split(' ')
-			retType = find_calleeRetType(lexemeList)
-			funcName = find_calleeName(lexemeList)
+			retType = self.find_calleeRetType(lexemeList)
+			funcName = self.find_calleeName(lexemeList)
 
 			rtIdx = codeStr.index(retType)
 			fnIdx = codeStr.index(funcName)
 
-			check_valid_arrange(rtIdx, fnIdx)
+			self.check_valid_arrange(rtIdx, fnIdx)
 
 			callee = [retType, funcName]
-			append_callee(callee)
+			self.append_callee(callee)
 
-		else :
-			print_error_parse()
+#		else :
+#print_error_parse()
 
 	def check_valid_arrange(self, small, big, importance=0) :
-		if small >= big :
+#		if small >= big :
 
-			if importance :
-				print_error_arrange()
+#			if importance :
+#				print_error_arrange()
 
-			else:
-				print_warning_arrange()
+#			else:
+#				print_warning_arrange()
 
 		return
 
@@ -107,11 +104,10 @@ class InstructionParser :
 		return lexemeList[callIndex + 1]
 
 	def find_calleeName(self, lexemeList) :
-		indexs = get_regex_index(lexemeList, '@*(')
+		indexs = get_regex_index(lexemeList, '@.*\(')
 		funcName = lexemeList[indexs[0]].split(Delimiter.PARENL.value)[0]
 		
 		return funcName
-
 
 class IRParser :
 
@@ -379,3 +375,11 @@ class IRParser :
 			print("Error: parse_function_define - Wrong format is in LLVM IR function definition ")
 			print(causeStr)
 			exit(-1)
+
+
+if __name__ == "__main__" :
+	fp = open("test.ll")
+	instLines = fp.readlines()
+	IP = InstructionParser(instLines, "test caller")
+	IP.start_parsing()
+	print(IP.get_callee())
