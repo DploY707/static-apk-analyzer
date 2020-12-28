@@ -132,7 +132,7 @@ class IRParser :
 		functionDict['functionName'] = str(functionName)
 		functionDict['returnType'] = str(returnType)
 		functionDict['paramList'] = params
-		functionDict['functionIndex'] = self.functionIndex
+		functionDict['functionIndex'] = functionIndex
 		functionDict['codeSize'] = codeSize
 		functionDict['IRCodes'] = IRCodes
 
