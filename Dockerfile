@@ -1,5 +1,6 @@
 FROM ubuntu:18.04
 MAINTAINER DploY707 <starj1024@gmail.com>
+MAINTAINER kordood <gigacms@gmail.com>
 
 # Update apt source list mirror site
 RUN sed -i 's/archive.ubuntu.com/mirror.kakao.com/g' /etc/apt/sources.list
@@ -7,8 +8,10 @@ RUN sed -i 's/archive.ubuntu.com/mirror.kakao.com/g' /etc/apt/sources.list
 # Install basic packages
 RUN \
     apt-get update -y &&\
-    apt-get install git zip curl unzip vim python3 python3-pip -y &&\
-    apt-get update -y
+    apt-get install git zip curl unzip vim python3.8 python3-pip -y &&\
+    apt-get update -y &&\
+#	update-alternatives --config python3
+	update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1
 
 # Install androguard
 WORKDIR /root
