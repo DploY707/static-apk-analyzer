@@ -37,16 +37,13 @@ class Function :
 	def get_IRCodes(self) :
 		return self.IRCodes
 
-
 class InstructionParser :
 
 	def __init__(self, codeList, caller) :
 		self.codeList = codeList
 		self.caller = caller
 		self.callee = list()
-
-	def append_callee(self, callee) :
-		self.callee.append(callee)
+		self.start_parsing()
 
 	def get_caller(self) :
 		return self.caller
@@ -56,25 +53,24 @@ class InstructionParser :
 
 	def start_parsing(self) :
 		for codeStr in self.codeList :
-			self.parse_code(codeStr)
+			if self.is_call_instruction(codeStr) :
+				callee = self.parse_code(codeStr)
+				self.callee.append(callee)
 
 		print("parsing Done!")
 
 	def parse_code(self, codeStr) :
-		if self.is_call_instruction(codeStr) :
 			callee = list()
 
 			lexemeList = codeStr.split(' ')
 			retType = self.find_calleeRetType(lexemeList)
 			funcName = self.find_calleeName(lexemeList)
 
-			rtIdx = codeStr.index(retType)
-			fnIdx = codeStr.index(funcName)
 
 			self.check_valid_arrange(codeStr, retType, funcName)
 
 			callee = [retType, funcName]
-			self.append_callee(callee)
+			return callee
 
 	def check_valid_arrange(self, targetStr, lStr, rStr, importance=0) :
 		small = targetStr.index(lStr)
@@ -116,7 +112,6 @@ class InstructionParser :
 	def print_warning_arrange(self, targetStr) :
 		print("Warning: Invalid arrange of string - \"" + targetStr + "\"")
 
-
 class IRParser :
 
 	def __init__(self, targetPath, lexFlag=0) :
@@ -132,7 +127,7 @@ class IRParser :
 		functionDict['functionName'] = str(functionName)
 		functionDict['returnType'] = str(returnType)
 		functionDict['paramList'] = params
-		functionDict['functionIndex'] = functionIndex
+		functionDict['functionIndex'] = int(functionIndex)
 		functionDict['codeSize'] = codeSize
 		functionDict['IRCodes'] = IRCodes
 
