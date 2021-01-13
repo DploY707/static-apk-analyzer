@@ -3,7 +3,7 @@ import utils
 from code_extractor import CodeExtractor
 
 DATASET_ROOT_PATH = '/root/workDir/data'
-RESULT_ROOT_PATH = '/root/results/methodLists'
+RESULT_ROOT_PATH = '/root/results'
 
 def print_analyzing_status(index, dataSetSize, dataSetDir, targetAPK) :
 	print(utils.set_string_colored('[' + str(index+1) + ' / ' + str(dataSetSize) + ']', utils.Color.GREEN.value) + ' in "' + dataSetDir + '" Analyzing......  "' + targetAPK + '"')
@@ -28,10 +28,12 @@ def generate_methodLists_from_dataSet(dataDir, resultDir) :
 
 		APKFilePath = dataDir + '/' + dataSet[i]
 		resultFilePath = resultDir + '/' + str(i) + '_' + dataSet[i]
+                resultFilePath_referenceList = resultDir + '/referenceLists/' + str(i) + '_' + dataSet[i] + '_referenceList'
 
 		ce = CodeExtractor(APKFilePath)
 
-		save_methodList(resultFilePath, ce.get_methodInfoList())
+                save_result(resultFilePath_methodList, ce.get_methodInfoList())
+                save_result(resultFilePath_referenceList, ce.get_referenceInfoList())
 
 	print_count_completed_apk(apkNum)
 
