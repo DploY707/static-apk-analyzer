@@ -13,6 +13,7 @@ class CodeExtractor :
         self.methods = self.dex.get_methods()
         
         self.methodInfoList = None
+        self.referenceInfoList = None
         
     def method_info_to_dict(self, className, methodName, metaInfo, accessFlags, methodIndex, codeSize, instructions, sourceCode) :
         methodDict = OrderedDict()
