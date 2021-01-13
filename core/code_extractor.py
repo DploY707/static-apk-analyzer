@@ -135,6 +135,51 @@ class CodeExtractor :
         dv.process()
         return dv.get_source()
 
+        def reference_info_to_dict(self, callerClass, callerMethod, calleeClass, calleeMethod) :
+        # TODO : Call-type should be concerned
+        referenceInfoDict = OrderedDict()
+
+        referenceInfoDict['callerClass'] = callerClass
+        referenceInfoDict['callerMethod'] = callerMethod
+        referenceInfoDict['calleeClass'] = calleeClass
+        referenceInfoDict['calleeMethod'] = calleeMethod
+
+        return referenceInfoDict
+
+    def generate_referenceInfoList(self) :
+        if self.methodInfoList is not None :
+            print('Start generate referenceInfoList')
+
+            callReferenceList = list()
+
+            for methodInfo in self.methodInfoList :
+                for inst in methodInfo['instructions'] :
+                    if '-payload' not in inst and 'invoke' in inst['smali'] :
+                        calleeInfo = inst['smali'].split(', ')[-1]
+
+                        if '->' in calleeInfo :
+                            callReferenceList.append(self.reference_info_to_dict(
+                                methodInfo['className'],
+                                methodInfo['methodName'],
+                                calleeInfo.split('->')[0],
+                                calleeInfo.split('->')[1]
+                                ))
+                        else :
+                            # TODO : this case should be handled for full coverage of code extraction
+                            print(calleeInfo)
+
+            self.referenceInfoList = callReferenceList
+
+        else:
+            print('methodList is not initialized')
+            return
+
+    def get_referenceInfoList(self) :
+        if self.referenceInfoList is None :
+            self.generate_referenceInfoList()
+
+        return self.referenceInfoList
+
     # TODO : implement or porting new decompiiler for asm to cpp/c code
     def native_to_cpp(self, methInfo) :
         return
