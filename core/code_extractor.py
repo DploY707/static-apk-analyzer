@@ -6,17 +6,17 @@ from androguard.core.analysis.analysis import MethodAnalysis as methAnalysis
 from androguard.decompiler.dad.decompile import DvMethod
 
 class CodeExtractor :
-
+    
     def __init__(self, target) :
         self.apk = openAPK(target)
         self.dex = getDEX(self.apk.get_dex())
         self.methods = self.dex.get_methods()
-
+        
         self.methodInfoList = None
-
+        
     def method_info_to_dict(self, className, methodName, metaInfo, accessFlags, methodIndex, codeSize, instructions, sourceCode) :
         methodDict = OrderedDict()
-
+        
         methodDict['className'] = str(className)
         methodDict['methodName'] = str(methodName)
         methodDict['returnType'] = metaInfo['return']
@@ -135,7 +135,7 @@ class CodeExtractor :
         dv.process()
         return dv.get_source()
 
-        def reference_info_to_dict(self, callerClass, callerMethod, calleeClass, calleeMethod) :
+    def reference_info_to_dict(self, callerClass, callerMethod, calleeClass, calleeMethod) :
         # TODO : Call-type should be concerned
         referenceInfoDict = OrderedDict()
 
