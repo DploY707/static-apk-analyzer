@@ -14,10 +14,10 @@ def print_progress_directories(index, totalDirList) :
 def print_count_completed_apk(apkNum) :
 	print('Complete analyzing for ' + str(apkNum) + ' apks :)')
 
-def save_methodList(resultPath, methodInfoList) :
-	methodList = open(resultPath, 'wb')
-	pickle.dump(methodInfoList, methodList)
-	methodList.close()
+def save_result(resultPath, data) :
+        result = open(resultPath, 'wb')
+        pickle.dump(data, result)
+        result.close()
 
 def generate_methodLists_from_dataSet(dataDir, resultDir) :
 	dataSet = os.listdir(dataDir)
