@@ -60,33 +60,14 @@ class InstructionParser :
 		print("parsing Done!")
 
 	def parse_code(self, codeStr) :
-			callee = list()
+			callee = None
 
 			lexemeList = codeStr.split(' ')
-			retType = self.find_calleeRetType(lexemeList)
 			funcName = self.find_calleeName(lexemeList)
 
-
-			self.check_valid_arrange(codeStr, retType, funcName)
-
-			callee = [retType, funcName]
+			callee = funcName
 			return callee
-
-	def check_valid_arrange(self, targetStr, lStr, rStr, importance=0) :
-		small = targetStr.index(lStr)
-		big = targetStr.index(rStr)
-
-		if small >= big :
-
-			if importance :
-				self.print_error_arrange(targetStr)
-				exit(-1)
-
-			else:
-				self.print_warning_arrange(targetStr)
-
-		return
-
+			
 	def is_call_instruction(self, codeStr) :
 		index = codeStr.find(Delimiter.CALL.value)
 
@@ -94,11 +75,6 @@ class InstructionParser :
 			return True
 
 		return False
-
-	def find_calleeRetType(self, lexemeList) :
-		callIndex = lexemeList.index(Delimiter.CALL.value)
-
-		return lexemeList[callIndex + 1]
 
 	def find_calleeName(self, lexemeList) :
 		indexs = get_regex_index(lexemeList, '@.*\(')
