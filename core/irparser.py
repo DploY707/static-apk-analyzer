@@ -19,7 +19,7 @@ class Function :
 		self.codeSize = codeSize
 		self.IRCodes = IRCodes
 
-	def get_name(self) :
+	def get_functionName(self) :
 		return self.functionName
 
 	def get_returnType(self) :
@@ -39,14 +39,14 @@ class Function :
 
 class InstructionParser :
 
-	def __init__(self, codeList, caller) :
+	def __init__(self, codeList, currentFunction) :
 		self.codeList = codeList
-		self.caller = caller
+		self.currentFunction = currentFunction
 		self.callee = list()
 		self.start_parsing()
 
-	def get_caller(self) :
-		return self.caller
+	def get_currentFunction(self) :
+		return self.currentFunction
 
 	def get_callee(self) :
 		return self.callee
@@ -57,8 +57,6 @@ class InstructionParser :
 				callee = self.parse_code(codeStr)
 				self.callee.append(callee)
 
-		print("parsing Done!")
-
 	def parse_code(self, codeStr) :
 			callee = None
 
@@ -67,14 +65,11 @@ class InstructionParser :
 
 			callee = funcName
 			return callee
-			
+
 	def is_call_instruction(self, codeStr) :
 		index = codeStr.find(Delimiter.CALL.value)
 
-		if index > -1 :
-			return True
-
-		return False
+		return True if index > -1 else False
 
 	def find_calleeName(self, lexemeList) :
 		indexs = get_regex_index(lexemeList, '@.*\(')
@@ -82,7 +77,7 @@ class InstructionParser :
 		
 		return funcName
 
-	def print_error_arrange(self, targetStr) :
+	def print_error(self, msg) :
 		print("Error: Invalid arrange of string - \"" + targetStr + "\"")
 
 	def print_warning_arrange(self, targetStr) :
@@ -90,11 +85,9 @@ class InstructionParser :
 
 class IRParser :
 
-	def __init__(self, targetPath, lexFlag=0) :
-		self.IRFile = self.open_IRFile(targetPath)
-		self.lexFlag = lexFlag
+	def __init__(self, targetPath) :
+		self.IRFile = open(IRFilePath, 'rb')
 		self.functionIndex = 0
-
 		self.functionList = None 
 
 	def make_function_info_to_dict(self, functionName, returnType, params, functionIndex, codeSize, IRCodes) :
@@ -142,82 +135,18 @@ class IRParser :
 
 		return self.functionList
 
-	def open_IRFile(self, IRFilePath) :
-		IRFile = open(IRFilePath, 'r', encoding='us-ascii')
-		return IRFile
-
-	def readline_IRFile(self) :
-		try :
-			IRStr = self.IRFile.readline()
-
-		except UnicodeDecodeError :
-			return ""
+	def readLine_IRFile(self) :
+		IRStr = self.IRFile.readline()
 
 		return IRStr
 
-	def readlines_IRFile(self) :
-		IRStrList = self.IRFilereadlines()
-		return IRStrList
-
-	# lexer flag(default: 0)
-	# 0: lex line by line, 1: lex full line in one time
 	def lex_function(self) :
-		lexFlag = self.lexFlag
-
-		functions = None
-
-		if lexFlag is None :
-			lexFlag = 0
-
-		if lexFlag is 0 :
-			functions = self.lex_line_by_line()
-
-		elif lexFlag is 1 :
-			functions = self.lex_full_line()
-
-		else :
-			print("Warning: lex_function - lexFlag is invalid. (" + str(lexFlag) + ")")
-			functions = self.lex_line_by_line()
-
-		return functions
-
-	def lex_line_by_line(self) :
 		functions = list()
 		line = None
 		isInBrace = False
 
 		while line != '' :
-			line = self.readline_IRFile()
-
-			if not isInBrace :
-
-				if self.is_function_define(line) :
-					functionName, returnType, params = self.parse_function_define(line)
-					IRCodeList = list()
-					self.functionIndex += 1
-					isInBrace = True
-
-			else :
-
-				if line[0] is Delimiter.BRACER.value : 
-					isInBrace = False
-					IRCodes = IRCodeList[:]		# shallow copy
-					codeSize = len(IRCodes)
-					func = Function(functionName, returnType, params, self.functionIndex, codeSize, IRCodes)
-					functions.append(func)
-
-				else :
-					code = line.strip()
-					IRCodeList.append(code)
-
-		return functions
-
-	def lex_full_line(self) :
-		functions = list()
-		lines = self.readlines_IRFile()
-		isInBrace = False
-
-		for line in lines :
+			line = self.readLine_IRFile().decode('utf-8')
 
 			if not isInBrace :
 
@@ -263,6 +192,14 @@ class IRParser :
 		params = None
 
 		funcAttrList = self.get_function_Attribute_List(targetStr)
+
+		attrLeftList = funcAttrList[0]
+		returnType = attrLeftList[-1]
+		functionName = funcAttrList[1]
+		params = funcAttrList[2]
+
+		# Todo: check format & parse
+		'''
 		format = self.check_format(funcAttrList[0])
 
 		
@@ -294,7 +231,7 @@ class IRParser :
 
 		else :
 			self.error_wrong_format(targetStr)
-
+		'''
 		return functionName, returnType, params
 
 	def get_function_Attribute_List(self, targetStr) :
