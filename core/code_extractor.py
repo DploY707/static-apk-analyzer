@@ -6,7 +6,7 @@ from androguard.core.analysis.analysis import MethodAnalysis as methAnalysis
 from androguard.decompiler.dad.decompile import DvMethod
 
 class CodeExtractor :
-    
+
     def __init__(self, target) :
         self.apk = openAPK(target)
         self.dex = getDEX(self.apk.get_dex())
