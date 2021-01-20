@@ -85,7 +85,7 @@ class InstructionParser :
 
 class IRParser :
 
-	def __init__(self, targetPath) :
+	def __init__(self, IRFilePath) :
 		self.IRFile = open(IRFilePath, 'rb')
 		self.functionIndex = 0
 		self.functionList = None 
@@ -119,7 +119,7 @@ class IRParser :
 
 		for function in functions :
 			self.functionList.append(self.make_function_info_to_dict(
-				function.get_name(),
+				function.get_functionName(),
 				function.get_returnType(),
 				self.make_indexList_to_dict(function.get_params()),
 				function.get_functionIndex(),
