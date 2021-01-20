@@ -38,7 +38,7 @@ class NativeExtractor:
 
 	def extract_APK(self, APKPath) :
 		outdirPath = APKPath.split(".apk")[0]
-		cmd = "unzip -f -d " + outdirPath + ' ' + APKPath
+		cmd = "unzip -u -d " + outdirPath + ' ' + APKPath
 
 		self.print_extract_APK(APKPath)
 		call(cmd, shell=True, stdout=DEVNULL)
