@@ -148,6 +148,8 @@ class CodeExtractor :
         return referenceInfoDict
 
     def generate_referenceInfoList(self) :
+        # In this version, just consider about call reference
+        # TODO : implement data reference parsing module
         if self.methodInfoList is not None :
             print('Start generate referenceInfoList')
 
