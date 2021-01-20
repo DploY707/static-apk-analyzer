@@ -136,7 +136,7 @@ class CodeExtractor :
         dv.process()
         return dv.get_source()
 
-    def reference_info_to_dict(self, callerClass, callerMethod, calleeClass, calleeMethod) :
+    def referenceInfo_to_dict(self, callerClass, callerMethod, calleeClass, calleeMethod) :
         # TODO : Call-type should be concerned
         referenceInfoDict = OrderedDict()
 
@@ -159,7 +159,7 @@ class CodeExtractor :
                         calleeInfo = inst['smali'].split(', ')[-1]
 
                         if '->' in calleeInfo :
-                            callReferenceList.append(self.reference_info_to_dict(
+                            callReferenceList.append(self.referenceInfo_to_dict(
                                 methodInfo['className'],
                                 methodInfo['methodName'],
                                 calleeInfo.split('->')[0],
