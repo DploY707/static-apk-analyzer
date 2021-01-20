@@ -121,7 +121,7 @@ class IRParser :
 			self.functionList.append(self.make_function_info_to_dict(
 				function.get_functionName(),
 				function.get_returnType(),
-				self.make_indexList_to_dict(function.get_params()),
+				function.get_params(),
 				function.get_functionIndex(),
 				function.get_codeSize(),
 				self.make_indexList_to_dict(function.get_IRCodes())
@@ -261,15 +261,14 @@ class IRParser :
 		argStrList = argsStr.split(Delimiter.COMMA.value)
 
 		for argStr in argStrList :
-			argList = list()
+			argList = OrderedDict()
 			argStr = argStr.strip()
 			argSplitStr = argStr.split(Delimiter.PERCENT.value)
 			
 			argType = argSplitStr[0].strip()
 			argName = argSplitStr[-1]
 
-			argList.append(argType)
-			argList.append(argName)
+			argList[argType] = argName
 
 			argsList.append(argList)
 
