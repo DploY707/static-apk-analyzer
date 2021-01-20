@@ -2,7 +2,7 @@
 #
 # contributed by kordood
 
-import utils, shutil, os, pickle
+import utils, shutil, os, pickle, sys
 from subprocess import check_output, call, DEVNULL
 from retdec import RetDec
 from irparser import IRParser
@@ -124,7 +124,12 @@ class NativeExtractor:
 
 
 if __name__=="__main__" :
-	IRFILEPATH = "/home/liberty/Code_Extractor/Code-Extractor/data/hello.ll"
 	APKFILEPATH = "/root/workDir/data/app-x86-debug.apk"
-	ne = NativeExtractor(APKFILEPATH)
+	FUNCLISTPATH = "/root/results/functionLists"
+
+	if len(sys.argv) > 1 :
+		APKFILEPATH = sys.argv[1]
+
+	ne = NativeExtractor(APKFILEPATH, FUNCLISTPATH)
 	ne.run_extractor()
+
