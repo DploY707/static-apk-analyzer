@@ -62,7 +62,7 @@ WORKDIR /root
 RUN \
     mkdir results &&\
     cd results &&\
-    mkdir methodLists
+    mkdir methodLists &&\
     mkdir functionLists
 
 # Set project core
