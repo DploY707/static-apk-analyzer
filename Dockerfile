@@ -63,6 +63,7 @@ RUN \
     mkdir results &&\
     cd results &&\
     mkdir methodLists
+    mkdir functionLists
 
 # Set project core
 COPY core /root/workDir/core/
