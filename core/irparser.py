@@ -37,7 +37,7 @@ class Function :
 	def get_IRCodes(self) :
 		return self.IRCodes
 
-class InstructionParser :
+class CodeParser :
 
 	def __init__(self, codeList, currentFunction) :
 		self.codeList = codeList

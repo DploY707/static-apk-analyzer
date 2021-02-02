@@ -1,6 +1,6 @@
 import pickle
 from collections import OrderedDict
-from irparser import InstructionParser
+from irparser import CodeParser
 from utils import load_pickle as load_funcInfo
 
 class Referencer :
@@ -47,7 +47,7 @@ class Referencer :
 		return codeList
 
 	def extract_callRef(self, codeList, caller) :
-		ip = InstructionParser(codeList, caller)
+		ip = CodeParser(codeList, caller)
 		calleeList = ip.get_callee()
 		return calleeList
 
