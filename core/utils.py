@@ -99,3 +99,10 @@ def load_pickle(filePath) :
 	pickleFile = open(filePath, "rb")
 	loadedContent = pickle.load(pickleFile)
 	return loadedContent
+
+def remove_files(dirPath) :
+	fileList = os.listdir(dirPath)
+	
+	for file in fileList :
+		filePath = dirPath+ file
+		os.remove(filePath)

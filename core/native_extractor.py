@@ -6,35 +6,48 @@ import utils, shutil, os, pickle, sys
 from subprocess import check_output, call, DEVNULL
 from retdec import RetDec
 from irparser import IRParser
+from referencer import Referencer
 
 class NativeExtractor:
 
-	def __init__(self, target, result="/tmp") :
+	def __init__(self, target, resultDir="/tmp") :
 		self.APKPath = target
-		self.result = result
-		self.soFileList = list()
+		self.resultDir = resultDir
+		self.soPathList = list()
+		self.funcPathList = list()
 		self.retdec = RetDec()
 		self.retdecPath = "/home/retdec"
+		self.run_extractor()
 
+	def run_extractor(self) :
+		self.move_soFiles()
 
-	def print_extract_APK(self, APKPath) :
-		print("Extract APK:" + str(APKPath))
+		self.decompile_binary()
+		self.generate_functionInfo()
+		utils.remove_files(self.retdecPath + "/input/")
+		utils.remove_files(self.retdecPath + "/output/")
+
+	def move_soFiles(self) :
+		soFileList = list()
+		soSrcList = self.get_so_from_APK(self.APKPath)
+		soDestPath = self.retdecPath + "/input"
+
+		for soSrc in soSrcList :
+			shutil.copy(soSrc, soDestPath)
+			self.soPathList.append(soDestPath)
+			
 
 	def get_so_from_APK(self, APKPath) :
-		soFileList = list()
+		soPathList = list()
 		outPath = self.extract_APK(APKPath)
 		filePathList = self.find_fileList(outPath)
 
 		for filePath in filePathList :
 
 			if self.is_elf(filePath) :
-				soFileList.append(filePath)
+				soPathList.append(filePath)
 
-		return soFileList
-
-		# 1. extract APK
-		# 2. gethering so files
-		# 3. move so files
+		return soPathList
 
 	def extract_APK(self, APKPath) :
 		outdirPath = APKPath.split(".apk")[0]
@@ -65,21 +78,6 @@ class NativeExtractor:
 
 		return False
 
-	def run_extractor(self) :
-		soFileList = list()
-		soSrcList = self.get_so_from_APK(self.APKPath)
-		soDestPath = self.retdecPath + "/input"
-
-		for soSrc in soSrcList :
-			shutil.copy(soSrc, soDestPath)
-			soFileList.append(soDestPath)
-
-		self.soFileList = soFileList
-
-		self.decompile_binary()
-		self.generate_functionInfo()
-
-
 	def decompile_binary(self) :
 		targetList = os.listdir(self.retdecPath + "/input")
 		rd = self.retdec
@@ -92,19 +90,20 @@ class NativeExtractor:
 			rd.run_retdec()
 
 	def generate_functionInfo(self) :
-		outputPath = self.retdecPath + "/output"
-		fileList = os.listdir(outputPath)
-		llFileList = self.add_llFile(fileList)
+		retdecOutPath = self.retdecPath + "/output"
+		outFileList = os.listdir(retdecOutPath)
+		llFileList = self.add_llFile(outFileList)
 
 		for llFile in llFileList :
-			llFilePath = outputPath + '/' + llFile
+			llFilePath = retdecOutPath + '/' + llFile
 
 			parser = IRParser(llFilePath)
 			functionList = parser.get_functionList()
 
 			outFileName = llFile.replace(".ll", ".func")
-			resultPath = self.result + '/' + outFileName
-			self.save_functionInfo(resultPath, functionList)
+			funcInfoPath = self.resultDir + '/' + outFileName
+			self.save_functionInfo(funcInfoPath, functionList)
+			self.funcPathList.append(funcInfoPath)
 
 	def add_llFile(self, fileList) :
 		llFileList = list()
@@ -122,6 +121,10 @@ class NativeExtractor:
 		pickle.dump(functionInfoList, functionInfoFile)
 		functionInfoFile.close()
 
+	def print_extract_APK(self, APKPath) :
+		print("Extract APK:" + str(APKPath))
+
+
 
 if __name__=="__main__" :
 	APKFILEPATH = "/root/workDir/data/app-x86-debug.apk"
@@ -131,5 +134,10 @@ if __name__=="__main__" :
 		APKFILEPATH = sys.argv[1]
 
 	ne = NativeExtractor(APKFILEPATH, FUNCLISTPATH)
-	ne.run_extractor()
+
+	funcPathList = ne.funcPathList
+
+	for funcPath in funcPathList :
+		rf = Referencer(funcPath)
+		print(rf.get_callRefList())
 

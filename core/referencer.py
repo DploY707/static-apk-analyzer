@@ -3,7 +3,7 @@ from collections import OrderedDict
 from irparser import CodeParser
 from utils import load_pickle as load_funcInfo
 
-class Referencer :
+class CallReferencer :
 
 	def __init__(self, funcInfoPath) :
 		self.defineList = list()
@@ -50,4 +50,3 @@ class Referencer :
 		ip = CodeParser(codeList, caller)
 		calleeList = ip.get_callee()
 		return calleeList
-
