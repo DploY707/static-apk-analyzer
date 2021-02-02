@@ -1,13 +1,21 @@
 import pickle
 from collections import OrderedDict
 from irparser import InstructionParser
+from utils import load_pickle as load_funcInfo
 
 class Referencer :
 
-	def __init__(self) :
+	def __init__(self, funcInfoPath) :
 		self.defineList = list()
-		self.callRefList = list()
+		self.callRefList = None
+		self.funcInfoList = load_funcInfo(funcInfoPath)
 
+	def get_callRefList(self) :
+
+		if self.callRefList is None :
+			self.callRefList = self.generate_callRefList(self.funcInfoList)
+
+		return self.callRefList
 
 	def generate_defineList(self, funcInfoList) :
 		indexList = list()
@@ -18,14 +26,14 @@ class Referencer :
 		indexList.sort()
 		return indexList
 
-	def load_callRef(self, funcInfoList) :
-		callRefList = list()
+	def generate_callRefList(self, funcInfoList) :
+		callRefList = OrderedDict()
 
 		for funcInfo in funcInfoList :
 			caller = funcInfo['functionName']
 			codeList = self.load_codeList(funcInfo)
 			calleeList = self.extract_callRef(codeList, caller)
-			self.match_caller_callee(callRefList, caller, calleeList)
+			callRefList[str(caller)] = calleeList
 
 		return callRefList
 
@@ -42,21 +50,4 @@ class Referencer :
 		ip = InstructionParser(codeList, caller)
 		calleeList = ip.get_callee()
 		return calleeList
-
-
-	def match_caller_callee(self, callRefList, caller, calleeList) :
-
-		if len(calleeList) < 1 :
-			return
-
-		for callee in calleeList :
-			matchList = OrderedDict()
-			matchList['caller'] = caller
-			matchList['callee'] = callee
-			callRefList.append(matchList)
-
-def load_funcInfoList(filePath) :
-	funcInfoFile = open(filePath, "rb")
-	funcInfoList = pickle.load(funcInfoFile)
-	return funcInfoList
 
