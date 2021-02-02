@@ -1,4 +1,4 @@
-import os, subprocess, enum, re
+import os, subprocess, enum, re, pickle
 
 class Color(enum.Enum) :
 	BLACK = 90
@@ -94,3 +94,8 @@ def get_regex_index(targetList, regexStr) :
 	regex = re.compile(regexStr)
 	idxs = [i for i, item in enumerate(targetList) if re.search(regex, item)]
 	return idxs
+
+def load_pickle(filePath) :
+	pickleFile = open(filePath, "rb")
+	loadedContent = pickle.load(pickleFile)
+	return loadedContent
