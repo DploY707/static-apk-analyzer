@@ -23,12 +23,12 @@ class RetDec :
 		return decompilerPath
 
 	def get_filePath_llvm_IR(self) :
-		llFilePath = self.get_filePath_from_extension("ll")
+		llFilePath = self.get_filePath_with_extension("ll")
 
 		return llFilePath
 
 	def get_filePath_llvm_bc(self) :
-		bcFilePath = self.get_filePath_from_extension("bc")
+		bcFilePath = self.get_filePath_with_extension("bc")
 
 		return bcFilePath
 
@@ -73,3 +73,4 @@ if __name__=="__main__" :
 
 	rd = RetDec(args.input, args.output)
 	rd.run_retdec()
+
