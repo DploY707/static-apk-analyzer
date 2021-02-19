@@ -62,11 +62,12 @@ RUN mkdir /home/retdec/input /home/retdec/output
 USER root
 WORKDIR /root
 RUN \
-    mkdir results &&\
-    cd results &&\
-    mkdir methodLists &&\
-    mkdir functionLists &&\
-    mkdir referenceLists
+    mkdir result &&\
+    cd result &&\
+    mkdir tmp &&\
+    mkdir methodInfo &&\
+    mkdir functionInfo &&\
+    mkdir referenceInfo
 
 # Set project core
 COPY core /root/workDir/core/
@@ -76,3 +77,4 @@ ENV LANG C.UTF-8
 
 WORKDIR /root/workDir/core
 # CMD ["python3","main.py"]
+
