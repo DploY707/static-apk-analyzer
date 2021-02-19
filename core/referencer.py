@@ -1,19 +1,23 @@
-import pickle
 from collections import OrderedDict
 from irparser import CodeParser
-from utils import load_pickle as load_funcInfo
+from utils import load_pickle
+
 
 class CallReferencer :
 
-	def __init__(self, funcInfoPath) :
+	def __init__(self) :
 		self.defineList = list()
 		self.callRefList = None
-		self.funcInfoList = load_funcInfo(funcInfoPath)
+		self.funcInfoList = None
+
+	def load_funcInfo(self, funcInfoPath) :
+		self.funcInfoList = load_pickle(funcInfoPath)
 
 	def get_callRefList(self) :
 
 		if self.callRefList is None :
-			self.callRefList = self.generate_callRefList(self.funcInfoList)
+			self.callRefList = list()
+			self.generate_callRefList(self.funcInfoList)
 
 		return self.callRefList
 
@@ -27,26 +31,19 @@ class CallReferencer :
 		return indexList
 
 	def generate_callRefList(self, funcInfoList) :
-		callRefList = OrderedDict()
 
 		for funcInfo in funcInfoList :
 			caller = funcInfo['functionName']
-			codeList = self.load_codeList(funcInfo)
-			calleeList = self.extract_callRef(codeList, caller)
-			callRefList[str(caller)] = calleeList
+			calleeList = self.extract_calleeList(funcInfo['IRCodes'], caller)
 
-		return callRefList
+			for callee in calleeList :
+				callRef = OrderedDict()
+				callRef[str(caller)] = callee
 
-	def load_codeList(self, funcInfo) :
-		IRCodes = funcInfo['IRCodes']
-		codeList = list()
+				self.callRefList.append(callRef)
 
-		for i in range(len(IRCodes)) :
-			codeList.append(IRCodes[str(i+1)])
-
-		return codeList
-
-	def extract_callRef(self, codeList, caller) :
+	def extract_calleeList(self, codeList, caller) :
 		ip = CodeParser(codeList, caller)
 		calleeList = ip.get_callee()
 		return calleeList
+
