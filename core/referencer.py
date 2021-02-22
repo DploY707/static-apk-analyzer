@@ -33,12 +33,13 @@ class CallReferencer :
     def generate_callRefList(self, funcInfoList) :
 
         for funcInfo in funcInfoList :
-            caller = funcInfo['functionName']
+            caller = funcInfo['libraryName'] + ';' + funcInfo['functionName']
             calleeList = self.extract_calleeList(funcInfo['IRCodes'], caller)
 
             for callee in calleeList :
                 callRef = OrderedDict()
-                callRef[str(caller)] = callee
+                callRef['caller'] = caller
+                callRef['callee'] = callee
 
                 self.callRefList.append(callRef)
 

@@ -11,31 +11,14 @@ from utils import get_regex_index
 
 class Function :
 
-	def __init__(self, functionName, returnType, params, functionIndex, codeSize, IRCodes) :
+	def __init__(self, libraryName, functionName, returnType, params, functionIndex, codeSize, IRCodes) :
+		self.libraryName = libraryName
 		self.functionName = functionName
 		self.returnType = returnType
 		self.params = params
 		self.functionIndex = functionIndex
 		self.codeSize = codeSize
 		self.IRCodes = IRCodes
-
-	def get_functionName(self) :
-		return self.functionName
-
-	def get_returnType(self) :
-		return self.returnType
-
-	def get_params(self) :
-		return self.params
-
-	def get_functionIndex(self) :
-		return self.functionIndex
-
-	def get_codeSize(self) :
-		return self.codeSize
-
-	def get_IRCodes(self) :
-		return self.IRCodes
 
 class CodeParser :
 
@@ -93,14 +76,21 @@ class IRParser :
 
 	def __init__(self, IRFilePath) :
 		self.IRFile = open(IRFilePath, 'rb')
+		self.libraryName = self.get_libraryName(IRFilePath)
 		self.functionIndex = 0
 		self.functionList = None 
 		self.defineList = list()
 		self.declareList = list()
 
-	def make_function_info_to_dict(self, functionName, returnType, params, functionIndex, codeSize, IRCodes) :
-		functionDict = OrderedDict()
+	def get_libraryName(self, libraryPath) :
+		fileName = libraryPath.split('/')[-1]
+		libraryName = fileName.replace('.ll', '')
 
+		return libraryName
+
+	def make_function_info_to_dict(self, libraryName, functionName, returnType, params, functionIndex, codeSize, IRCodes) :
+		functionDict = OrderedDict()
+		functionDict['libraryName'] = str(libraryName)
 		functionDict['functionName'] = str(functionName)
 		functionDict['returnType'] = str(returnType)
 		functionDict['paramList'] = params
@@ -116,12 +106,13 @@ class IRParser :
 
 		for function in functions :
 			self.functionList.append(self.make_function_info_to_dict(
-				function.get_functionName(),
-				function.get_returnType(),
-				function.get_params(),
-				function.get_functionIndex(),
-				function.get_codeSize(),
-				function.get_IRCodes()
+				function.libraryName,
+				function.functionName,
+				function.returnType,
+				function.params,
+				function.functionIndex,
+				function.codeSize,
+				function.IRCodes
 				))
 
 		print('Parse function Lists from so file')
@@ -159,7 +150,7 @@ class IRParser :
 					isInBrace = False
 					IRCodes = IRCodeList[:]		# shallow copy
 					codeSize = len(IRCodes)
-					func = Function(functionName, returnType, params, self.functionIndex, codeSize, IRCodes)
+					func = Function(self.libraryName, functionName, returnType, params, self.functionIndex, codeSize, IRCodes)
 					functions.append(func)
 
 				else :
