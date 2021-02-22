@@ -1,9 +1,10 @@
-import os, re
+import re
 from collections import OrderedDict
 from androguard.core.bytecodes.apk import APK as openAPK
 from androguard.core.bytecodes.dvm import DalvikVMFormat as getDEX
 from androguard.core.analysis.analysis import MethodAnalysis as methAnalysis
 from androguard.decompiler.dad.decompile import DvMethod
+
 
 class CodeExtractor :
 
@@ -136,14 +137,12 @@ class CodeExtractor :
         dv.process()
         return dv.get_source()
 
-    def referenceInfo_to_dict(self, callerClass, callerMethod, calleeClass, calleeMethod) :
+    def referenceInfo_to_dict(self, caller, callee) :
         # TODO : Call-type should be concerned
         referenceInfoDict = OrderedDict()
 
-        referenceInfoDict['callerClass'] = callerClass
-        referenceInfoDict['callerMethod'] = callerMethod
-        referenceInfoDict['calleeClass'] = calleeClass
-        referenceInfoDict['calleeMethod'] = calleeMethod
+        referenceInfoDict['caller'] = caller
+        referenceInfoDict['callee'] = callee
 
         return referenceInfoDict
 
@@ -162,10 +161,8 @@ class CodeExtractor :
 
                         if '->' in calleeInfo :
                             callReferenceList.append(self.referenceInfo_to_dict(
-                                methodInfo['className'],
-                                methodInfo['methodName'],
-                                calleeInfo.split('->')[0],
-                                calleeInfo.split('->')[1]
+                                methodInfo['className'] + methodInfo['methodName'],
+                                calleeInfo.replace('->', '')
                                 ))
                         else :
                             # TODO : this case should be handled for full coverage of code extraction
@@ -186,3 +183,4 @@ class CodeExtractor :
     # TODO : implement or porting new decompiiler for asm to cpp/c code
     def native_to_cpp(self, methInfo) :
         return
+
