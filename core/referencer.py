@@ -5,45 +5,45 @@ from utils import load_pickle
 
 class CallReferencer :
 
-	def __init__(self) :
-		self.defineList = list()
-		self.callRefList = None
-		self.funcInfoList = None
+    def __init__(self) :
+        self.defineList = list()
+        self.callRefList = None
+        self.funcInfoList = None
 
-	def load_funcInfo(self, funcInfoPath) :
-		self.funcInfoList = load_pickle(funcInfoPath)
+    def load_funcInfo(self, funcInfoPath) :
+        self.funcInfoList = load_pickle(funcInfoPath)
 
-	def get_callRefList(self) :
+    def get_callRefList(self) :
 
-		if self.callRefList is None :
-			self.callRefList = list()
-			self.generate_callRefList(self.funcInfoList)
+        if self.callRefList is None :
+            self.callRefList = list()
+            self.generate_callRefList(self.funcInfoList)
 
-		return self.callRefList
+        return self.callRefList
 
-	def generate_defineList(self, funcInfoList) :
-		indexList = list()
+    def generate_defineList(self, funcInfoList) :
+        indexList = list()
 
-		for funcInfo in funcInfoList :
-			indexList.append(funcInfo['functionIndex'])
+        for funcInfo in funcInfoList :
+            indexList.append(funcInfo['functionIndex'])
 
-		indexList.sort()
-		return indexList
+        indexList.sort()
+        return indexList
 
-	def generate_callRefList(self, funcInfoList) :
+    def generate_callRefList(self, funcInfoList) :
 
-		for funcInfo in funcInfoList :
-			caller = funcInfo['functionName']
-			calleeList = self.extract_calleeList(funcInfo['IRCodes'], caller)
+        for funcInfo in funcInfoList :
+            caller = funcInfo['functionName']
+            calleeList = self.extract_calleeList(funcInfo['IRCodes'], caller)
 
-			for callee in calleeList :
-				callRef = OrderedDict()
-				callRef[str(caller)] = callee
+            for callee in calleeList :
+                callRef = OrderedDict()
+                callRef[str(caller)] = callee
 
-				self.callRefList.append(callRef)
+                self.callRefList.append(callRef)
 
-	def extract_calleeList(self, codeList, caller) :
-		ip = CodeParser(codeList, caller)
-		calleeList = ip.get_callee()
-		return calleeList
+    def extract_calleeList(self, codeList, caller) :
+        ip = CodeParser(codeList, caller)
+        calleeList = ip.get_callee()
+        return calleeList
 
