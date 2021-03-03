@@ -4,14 +4,15 @@
 #
 # contributed by kordood
 
-from delimiter import Delimiter
+from delimiter import Delimiter as Delim
 from collections import OrderedDict
 from sys import exit
 from utils import get_regex_index
 
 class Function :
 
-	def __init__(self, functionName, returnType, params, functionIndex, codeSize, IRCodes) :
+	def __init__(self, libraryName, functionName, returnType, params, functionIndex, codeSize, IRCodes) :
+		self.libraryName = libraryName
 		self.functionName = functionName
 		self.returnType = returnType
 		self.params = params
@@ -19,30 +20,13 @@ class Function :
 		self.codeSize = codeSize
 		self.IRCodes = IRCodes
 
-	def get_functionName(self) :
-		return self.functionName
-
-	def get_returnType(self) :
-		return self.returnType
-
-	def get_params(self) :
-		return self.params
-
-	def get_functionIndex(self) :
-		return self.functionIndex
-
-	def get_codeSize(self) :
-		return self.codeSize
-
-	def get_IRCodes(self) :
-		return self.IRCodes
-
-class InstructionParser :
+class CodeParser :
 
 	def __init__(self, codeList, currentFunction) :
 		self.codeList = codeList
 		self.currentFunction = currentFunction
 		self.callee = list()
+
 		self.start_parsing()
 
 	def get_currentFunction(self) :
@@ -55,44 +39,58 @@ class InstructionParser :
 		for codeStr in self.codeList :
 			if self.is_call_instruction(codeStr) :
 				callee = self.parse_code(codeStr)
-				self.callee.append(callee)
-
-	def parse_code(self, codeStr) :
-			callee = None
-
-			lexemeList = codeStr.split(' ')
-			funcName = self.find_calleeName(lexemeList)
-
-			callee = funcName
-			return callee
+				if callee is not None :
+					self.callee.append(callee)
 
 	def is_call_instruction(self, codeStr) :
-		index = codeStr.find(Delimiter.CALL.value)
+		index = codeStr.find(' ' + Delim.CALL.value + ' ')
 
 		return True if index > -1 else False
 
+	def parse_code(self, codeStr) :
+		lexemeList = codeStr.split(' ')
+		funcName = self.find_calleeName(lexemeList)
+		callee = funcName
+		return callee
+
 	def find_calleeName(self, lexemeList) :
 		indexs = get_regex_index(lexemeList, '@.*\(')
-		funcName = lexemeList[indexs[0]].split(Delimiter.PARENL.value)[0]
-		
+		funcName = None
+
+		try :
+			funcName = lexemeList[indexs[0]].split(Delim.PARENL.value)[0]
+		except IndexError:
+			print(lexemeList)
+			print(indexs)
+
 		return funcName
 
 	def print_error(self, msg) :
-		print("Error: Invalid arrange of string - \"" + targetStr + "\"")
+		print("Error: Invalid arrange of string - \"" + msg + "\"")
 
-	def print_warning_arrange(self, targetStr) :
-		print("Warning: Invalid arrange of string - \"" + targetStr + "\"")
+	def print_warning_arrange(self, msg) :
+		print("Warning: Invalid arrange of string - \"" + msg + "\"")
+
 
 class IRParser :
 
 	def __init__(self, IRFilePath) :
 		self.IRFile = open(IRFilePath, 'rb')
+		self.libraryName = self.get_libraryName(IRFilePath)
 		self.functionIndex = 0
 		self.functionList = None 
+		self.defineList = list()
+		self.declareList = list()
 
-	def make_function_info_to_dict(self, functionName, returnType, params, functionIndex, codeSize, IRCodes) :
+	def get_libraryName(self, libraryPath) :
+		fileName = libraryPath.split('/')[-1]
+		libraryName = fileName.replace('.ll', '')
+
+		return libraryName
+
+	def make_function_info_to_dict(self, libraryName, functionName, returnType, params, functionIndex, codeSize, IRCodes) :
 		functionDict = OrderedDict()
-
+		functionDict['libraryName'] = str(libraryName)
 		functionDict['functionName'] = str(functionName)
 		functionDict['returnType'] = str(returnType)
 		functionDict['paramList'] = params
@@ -102,29 +100,19 @@ class IRParser :
 
 		return functionDict
 
-	def make_indexList_to_dict(self, targetList) :
-		targetListDict = OrderedDict()
-
-		if bool(targetList) :
-
-			for index in range(len(targetList)) :
-				number = index + 1
-				targetListDict[str(number)] = targetList[index]
-
-		return targetListDict
-
 	def generate_functionList(self) :
 		self.functionList = list()
 		functions = self.lex_function()
 
 		for function in functions :
 			self.functionList.append(self.make_function_info_to_dict(
-				function.get_functionName(),
-				function.get_returnType(),
-				function.get_params(),
-				function.get_functionIndex(),
-				function.get_codeSize(),
-				self.make_indexList_to_dict(function.get_IRCodes())
+				function.libraryName,
+				function.functionName,
+				function.returnType,
+				function.params,
+				function.functionIndex,
+				function.codeSize,
+				function.IRCodes
 				))
 
 		print('Parse function Lists from so file')
@@ -158,11 +146,11 @@ class IRParser :
 
 			else :
 
-				if line[0] is Delimiter.BRACER.value : 
+				if line[0] is Delim.BRACER.value : 
 					isInBrace = False
 					IRCodes = IRCodeList[:]		# shallow copy
 					codeSize = len(IRCodes)
-					func = Function(functionName, returnType, params, self.functionIndex, codeSize, IRCodes)
+					func = Function(self.libraryName, functionName, returnType, params, self.functionIndex, codeSize, IRCodes)
 					functions.append(func)
 
 				else :
@@ -171,12 +159,22 @@ class IRParser :
 
 		return functions
 
-	def is_function_define(self, targetStr) :
-		if Delimiter.DEFINE.value in targetStr :
-			self.prevent_comma_space_split(targetStr)
-			firstWord = targetStr.split(' ')[0]
+	def is_function_define(self, expr) :
+		if Delim.DEFINE.value in expr :
+			self.prevent_comma_space_split(expr)
+			firstWord = expr.split(' ')[0]
 
-			if firstWord == Delimiter.DEFINE.value :
+			if firstWord == Delim.DEFINE.value :
+				return True
+
+		return False
+
+	def is_function_declare(self, expr) :
+		if Delim.DECLARE.value in expr :
+			self.prevent_comma_space_split(expr)
+			firstWord = expr.split(' ')[0]
+
+			if firstWord == Delim.DECLARE.value :
 				return True
 
 		return False
@@ -184,14 +182,8 @@ class IRParser :
 	def prevent_comma_space_split(self, targetStr) :
 		targetStr = targetStr.replace(', ', ',')
 
-	def parse_function_define(self, targetStr) :
-		splitStr = targetStr.split(" ")
-		attrLen = len(splitStr)
-		functionName = None
-		returnType = None
-		params = None
-
-		funcAttrList = self.get_function_Attribute_List(targetStr)
+	def parse_function_define(self, definition) :
+		funcAttrList = self.get_function_Attribute_List(definition)
 
 		attrLeftList = funcAttrList[0]
 		returnType = attrLeftList[-1]
@@ -234,16 +226,23 @@ class IRParser :
 		'''
 		return functionName, returnType, params
 
+	def parse_function_declare(self, declaration) :
+		splitByAt = declaration.split(Delim.AT.value)[1]
+		splitByPARENL = splitByAt.split(Delim.PARENL.value)[0]
+		functionName = Delim.AT.value + splitByPARENL
+
+		return functionName
+
 	def get_function_Attribute_List(self, targetStr) :
 		attrList = list()
-		funcNameLeftStr = targetStr.split(Delimiter.AT.value)[0].strip()
-		funcNameRightStr = targetStr.split(Delimiter.PARENR.value)[-1].strip()
+		funcNameLeftStr = targetStr.split(Delim.AT.value)[0].strip()
+		funcNameRightStr = targetStr.split(Delim.PARENR.value)[-1].strip()
 		funcNameMidStr = targetStr.split(funcNameLeftStr)[-1].split(funcNameRightStr)[0].strip()
 
 		funcNameLeftList = funcNameLeftStr.split(' ')
 		funcNameRightList = funcNameRightStr.split(' ')
 		
-		functionName = funcNameMidStr.split(Delimiter.PARENL.value)[0]
+		functionName = funcNameMidStr.split(Delim.PARENL.value)[0]
 		
 		funcArgStr = funcNameMidStr.split(functionName)[1]
 		funcArgList = self.parse_function_argument(funcArgStr)
@@ -257,13 +256,13 @@ class IRParser :
 
 	def parse_function_argument(self, targetStr) :
 		argsList = list()
-		argsStr = targetStr.strip(Delimiter.PARENL.value + Delimiter.PARENR.value)
-		argStrList = argsStr.split(Delimiter.COMMA.value)
+		argsStr = targetStr.strip(Delim.PARENL.value + Delim.PARENR.value)
+		argStrList = argsStr.split(Delim.COMMA.value)
 
 		for argStr in argStrList :
 			argList = OrderedDict()
 			argStr = argStr.strip()
-			argSplitStr = argStr.split(Delimiter.PERCENT.value)
+			argSplitStr = argStr.split(Delim.PERCENT.value)
 			
 			argType = argSplitStr[0].strip()
 			argName = argSplitStr[-1]
@@ -290,3 +289,4 @@ class IRParser :
 			print("Error: parse_function_define - Wrong format is in LLVM IR function definition ")
 			print(causeStr)
 			exit(-1)
+

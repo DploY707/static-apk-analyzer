@@ -50,8 +50,10 @@ RUN git clone https://github.com/avast/retdec && \
 	mkdir build &&		\
 	cd build &&			\
 	cmake .. -DCMAKE_INSTALL_PREFIX=/home/retdec/retdec-install -DCMAKE_LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/ && \
-	make -j$(nproc) &&	\
-	make install
+	make
+
+WORKDIR $HOME/retdec/build
+RUN make install
 
 ENV PATH /home/retdec/retdec-install/bin:$PATH
 RUN mkdir /home/retdec/input /home/retdec/output
@@ -60,10 +62,12 @@ RUN mkdir /home/retdec/input /home/retdec/output
 USER root
 WORKDIR /root
 RUN \
-    mkdir results &&\
-    cd results &&\
-    mkdir methodLists &&\
-    mkdir referenceLists
+    mkdir result &&\
+    cd result &&\
+    mkdir tmp &&\
+    mkdir methodInfo &&\
+    mkdir functionInfo &&\
+    mkdir referenceInfo
 
 # Set project core
 COPY core /root/workDir/core/
@@ -73,3 +77,4 @@ ENV LANG C.UTF-8
 
 WORKDIR /root/workDir/core
 # CMD ["python3","main.py"]
+

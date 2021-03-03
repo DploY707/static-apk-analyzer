@@ -1,62 +1,50 @@
-import pickle
 from collections import OrderedDict
-from irparser import InstructionParser
-
-class Referencer :
-
-	def __init__(self) :
-		self.defineList = list()
-		self.callRefList = list()
+from irparser import CodeParser
+from utils import load_pickle
 
 
-	def generate_defineList(self, funcInfoList) :
-		indexList = list()
+class CallReferencer :
 
-		for funcInfo in funcInfoList :
-			indexList.append(funcInfo['functionIndex'])
+    def __init__(self) :
+        self.defineList = list()
+        self.callRefList = None
+        self.funcInfoList = None
 
-		indexList.sort()
-		return indexList
+    def load_funcInfo(self, funcInfoPath) :
+        self.funcInfoList = load_pickle(funcInfoPath)
 
-	def load_callRef(self, funcInfoList) :
-		callRefList = list()
+    def get_callRefList(self) :
 
-		for funcInfo in funcInfoList :
-			caller = funcInfo['functionName']
-			codeList = self.load_codeList(funcInfo)
-			calleeList = self.extract_callRef(codeList, caller)
-			self.match_caller_callee(callRefList, caller, calleeList)
+        if self.callRefList is None :
+            self.callRefList = list()
+            self.generate_callRefList(self.funcInfoList)
 
-		return callRefList
+        return self.callRefList
 
-	def load_codeList(self, funcInfo) :
-		IRCodes = funcInfo['IRCodes']
-		codeList = list()
+    def generate_defineList(self, funcInfoList) :
+        indexList = list()
 
-		for i in range(len(IRCodes)) :
-			codeList.append(IRCodes[str(i+1)])
+        for funcInfo in funcInfoList :
+            indexList.append(funcInfo['functionIndex'])
 
-		return codeList
+        indexList.sort()
+        return indexList
 
-	def extract_callRef(self, codeList, caller) :
-		ip = InstructionParser(codeList, caller)
-		calleeList = ip.get_callee()
-		return calleeList
+    def generate_callRefList(self, funcInfoList) :
 
+        for funcInfo in funcInfoList :
+            caller = funcInfo['libraryName'] + ';' + funcInfo['functionName']
+            calleeList = self.extract_calleeList(funcInfo['IRCodes'], caller)
 
-	def match_caller_callee(self, callRefList, caller, calleeList) :
+            for callee in calleeList :
+                callRef = OrderedDict()
+                callRef['caller'] = caller
+                callRef['callee'] = callee
 
-		if len(calleeList) < 1 :
-			return
+                self.callRefList.append(callRef)
 
-		for callee in calleeList :
-			matchList = OrderedDict()
-			matchList['caller'] = caller
-			matchList['callee'] = callee
-			callRefList.append(matchList)
-
-def load_funcInfoList(filePath) :
-	funcInfoFile = open(filePath, "rb")
-	funcInfoList = pickle.load(funcInfoFile)
-	return funcInfoList
+    def extract_calleeList(self, codeList, caller) :
+        ip = CodeParser(codeList, caller)
+        calleeList = ip.get_callee()
+        return calleeList
 

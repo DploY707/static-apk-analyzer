@@ -1,9 +1,10 @@
-import sys, os, pickle
+import os
+import pickle
 import utils
 from code_extractor import CodeExtractor
 
 DATASET_ROOT_PATH = '/root/workDir/data'
-RESULT_ROOT_PATH = '/root/results'
+RESULT_ROOT_PATH = '/root/result'
 
 def print_analyzing_status(index, dataSetSize, dataSetDir, targetAPK) :
     print(utils.set_string_colored('[' + str(index+1) + ' / ' + str(dataSetSize) + ']', utils.Color.GREEN.value) + ' in "' + dataSetDir + '" Analyzing......  "' + targetAPK + '"')
@@ -27,8 +28,8 @@ def generate_methodLists_from_dataSet(dataDir, resultDir) :
         print_analyzing_status(i, apkNum, dataDir, dataSet[i])
         
         APKFilePath = dataDir + '/' + dataSet[i]
-        resultFilePath_methodList = resultDir + '/' + str(i) + '_' + dataSet[i]
-        resultFilePath_referenceList = resultDir + '/referenceLists/' + str(i) + '_' + dataSet[i] + '_referenceList'
+        resultFilePath_methodList = resultDir + '/methodInfo/' + str(i) + '_' + dataSet[i] + '_byte_method.pickle'
+        resultFilePath_referenceList = resultDir + '/referenceInfo/' + str(i) + '_' + dataSet[i] + '_byte_call.pickle'
         
         ce = CodeExtractor(APKFilePath)
         
@@ -47,3 +48,4 @@ if __name__ == '__main__' :
         for i in range(len(datasetDirList)) :
             print_progress_directories(i, datasetDirList)
             generate_methodLists_from_dataSet(datasetDirList[i], resultDirList[i])
+

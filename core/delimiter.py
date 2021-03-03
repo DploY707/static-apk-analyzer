@@ -4,6 +4,7 @@
 
 from enum import Enum
 
+
 class Delimiter(Enum) :
 	PARENL = '('
 	PARENR = ')'
@@ -15,3 +16,8 @@ class Delimiter(Enum) :
 	AT = '@'
 	PERCENT = '%'
 	CALL = 'call'
+	ARM = 'ARM'
+	MIPS = 'MIPS'
+	x86_64 = 'x86-64'
+	x86 = 'Intel 80386'
+
